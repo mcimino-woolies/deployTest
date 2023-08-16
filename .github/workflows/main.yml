@@ -10,12 +10,35 @@ on:
       environment:
         type: choice
         options:
-          - dev
+          - test
+          - development
 
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
     environment: ${{ github.event.inputs.environment }}
     steps:
-      - name: Print message using echo
-        run: echo "${{ vars.NAME }}"
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18.16.1'
+
+      - name: Install Angular CLI
+        run: npm install -g @angular/cli
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build Angular app
+        run: ng build --configuration=${{ github.event.inputs.environment }} --output-path=dist/ --base-href /${{ vars.BUCKET_NAME }}/
+
+      - name: Authenticate with Google Cloud
+        run: echo "${{ secrets.GCP_SA_KEY }}" | base64 --decode > key.json
+
+      - name: Deploy to GCS 
+        run: |
+          gcloud auth activate-service-account --key-file=key.json
+          gsutil -m cp -r dist/* gs://${{ vars.BUCKET_NAME }}
