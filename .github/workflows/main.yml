@@ -9,6 +9,8 @@ on:
         default: 'main'
       environment:
         type: environment
+        options:
+          - dev
 
 jobs:
   build-and-deploy:
