@@ -1,4 +1,4 @@
-name: Build and Deploy Angular App to GCS
+name: TESTING
 
 on:
   workflow_dispatch:
@@ -15,4 +15,4 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Print message using echo
-        run: echo "${ vars.NAME }"
+        run: echo "${{ vars.NAME }}"
