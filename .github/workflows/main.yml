@@ -15,8 +15,8 @@ on:
       build-configuration:
         type: choice
         required: false
-        default: ''
         options:
+          - default
           - test
           - development
 
@@ -40,4 +40,4 @@ jobs:
         run: npm ci
 
       - name: Build Angular app
-        run: ng build --configuration=${{ github.event.inputs.build-configuration || vars.CONFIGURATION }} --output-path=dist/ --base-href /${{ vars.BUCKET_NAME }}/
+        run: ng build --configuration=${{ github.event.inputs.build-configuration == 'default' && vars.CONFIGURATION || github.event.inputs.build-configuration }} --output-path=dist/ --base-href /${{ vars.BUCKET_NAME }}/
