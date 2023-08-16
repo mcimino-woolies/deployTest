@@ -11,6 +11,12 @@ on:
         type: choice
         options:
           - test
+          - dev
+      build-configuration:
+        type: choice
+        required: false
+        options:
+          - test
           - development
 
 jobs:
@@ -33,12 +39,4 @@ jobs:
         run: npm ci
 
       - name: Build Angular app
-        run: ng build --configuration=${{ github.event.inputs.environment }} --output-path=dist/ --base-href /${{ vars.BUCKET_NAME }}/
-
-      - name: Authenticate with Google Cloud
-        run: echo "${{ secrets.GCP_SA_KEY }}" | base64 --decode > key.json
-
-      - name: Deploy to GCS 
-        run: |
-          gcloud auth activate-service-account --key-file=key.json
-          gsutil -m cp -r dist/* gs://${{ vars.BUCKET_NAME }}
+        run: ng build --configuration=${{ github.event.inputs.build-configuration || vars.CONFIGURATION }} --output-path=dist/ --base-href /${{ vars.BUCKET_NAME }}/
