@@ -8,7 +8,7 @@ on:
         required: false
         default: 'main'
       environment:
-        type: environment
+        type: choice
         options:
           - dev
 
